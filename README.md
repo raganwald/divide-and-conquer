@@ -1,2 +1,2 @@
 # divide-and-conquer
-The divide and conquer pattern in typeScript
+The divide and conquer pattern in TypeScript
