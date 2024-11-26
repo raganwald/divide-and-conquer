@@ -1,22 +1,28 @@
 import {
-  divideAndConquer,
+  unfoldRefoldFor,
   identity
 } from '../src/divide-and-conquer';
 
 import {
-  RecursiveArray,
-  RecursiveArrayOrElement
-} from '../src/recursive-array';
+  RecursiveArray
+} from '../src/recursive-collection';
 
 // double demonstrates a crude map on a recursive array
+//
+// TODO: Why do I have to know the difference between a recursive iterable and a recursive array?
+//       Or, why can't I decide how the mapping is going to work?
+//
+// Bottom line; Refctor until this works with RecursiveArray. As a client, I should be expected to
+// use the concrete types, and the internal function should only "genericize" for its own convenience
+// this may require. Like... An iterable over the elements? Fine, should be Iterable<Recursive...>
 
-const isNumber = (n: RecursiveArrayOrElement<number>) => typeof n === 'number';
+const isNumber = (n: number | RecursiveArray<number>) => typeof n === 'number';
 
-const double = divideAndConquer(
-  isNumber,
-  (n: number) => n * 2,
-  identity<RecursiveArray<number>>,
-  identity<RecursiveArray<number>>
+const double = unfoldRefoldFor(
+  isNumber, // isTerminal
+  (n: number) => n * 2, // mapTerminal
+  identity<RecursiveArray<number>>, // unfold
+  (i: Iterable<number | RecursiveArray<number>>) => [...i]
 );
 
 test('double', () => {

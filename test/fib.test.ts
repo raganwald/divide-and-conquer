@@ -1,15 +1,15 @@
 import {
-  divideAndConquer,
+  unfoldRefoldFor,
   identity
 } from '../src/divide-and-conquer';
 
 const isZeroOrOne = (n: number) => n === 0 || n === 1;
 
-const fib = divideAndConquer(
+const fib = unfoldRefoldFor(
   isZeroOrOne,
   identity,
   (n: number) => [n - 1, n - 2],
-  ([nMinusOne, nMinusTwo]: ReadonlyArray<number>) => nMinusOne + nMinusTwo
+  ([nMinusOne, nMinusTwo]: Iterable<number>) => nMinusOne + nMinusTwo
 );
 
 test('fib', () => {

@@ -1,22 +1,21 @@
 import {
-  divideAndConquer,
+  unfoldRefoldFor,
   identity
 } from '../src/divide-and-conquer';
 
 import {
-  RecursiveArray,
-  RecursiveArrayOrElement
-} from '../src/recursive-array';
+  RecursiveArray
+} from '../src/recursive-collection';
 
 // sum demonstrates a crude reduce on a recursive array
 
-const isNumber = (n: RecursiveArrayOrElement<number>) => typeof n === 'number';
+const isNumber = (n: number | RecursiveArray<number>) => typeof n === 'number';
 
-const sum = divideAndConquer(
+const sum = unfoldRefoldFor(
   isNumber,
   identity,
   identity<RecursiveArray<number>>,
-  (a: ReadonlyArray<number>): number => a.reduce((a, b) => a+b, 0)
+  (a: Iterable<number>): number => [...a].reduce((a, b) => a+b, 0)
 );
 
 test('sum', () => {
