@@ -29,7 +29,7 @@ export function unfoldRefoldFor<Terminal, Unfoldable, Folded>(
       const unfoldedRefoldedUnfolded = new IterableMap(unfoldRefold, unfolded);
       const refoldedAllTheWayDown = refold(unfoldedRefoldedUnfolded);
 
-      return refoldedAllTheWayDown
+      return refoldedAllTheWayDown;
     }
   }
 }
