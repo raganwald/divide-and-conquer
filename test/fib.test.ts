@@ -6,7 +6,7 @@ import {
 const isZeroOrOne = (n: number) => n === 0 || n === 1;
 
 const fib = unfoldRefoldFor(
-  isZeroOrOne,
+  isZeroOrOne, // does not appear to enforce `iSZeroOrOne` being a type predicate!
   identity,
   (n: number) => [n - 1, n - 2],
   ([nMinusOne, nMinusTwo]: Iterable<number>) => nMinusOne + nMinusTwo

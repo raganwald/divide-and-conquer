@@ -1,31 +1,18 @@
-// TODO: do not assume that unfold returns a terminal or unfoldable. what if it's
-// something like a pair identifying a quadtree's child position by name instead
-// of by fixed order in a list? Would need to be able to unpack, transform, and
-// repack. That feels like a Mo—... Never mind.
-//
+
 // I fear I am making a hylomorphism over directed acyclic graphs:
 // https://en.wikipedia.org/wiki/Hylomorphism_(computer_science)#Trees
 //
-// Naming convention: Unfold-Fold metaphor.
-// types here are not exported, but their names document intention
+// TODO: Allow the use of a plain predicate for isTerminal when the TypeScript
+// types of a terminal and a compound are the same. Example: Fibonacci, where
+// the terminals are `0` and `1`, and the compounds are `> 1`, and they all are
+// of type `number`. 
+//
+// TODO: Do not assume that unfold returns a terminal or unfoldable. what if it's
+// something like a pair identifying a quadtree's child position by name instead
+// of by fixed order in a list? Would need to be able to unpack, transform, and
+// repack. That feels like a Mo—... Never mind.
 
-class IterableMap<Source, Mapped> { 
-  map: (s: Source) => Mapped;
-  source: Iterable<Source>;
-
-  constructor(map: (s: Source) => Mapped, source: Iterable<Source>) {
-    this.map = map;
-    this.source = source;
-  }
-
-  [Symbol.iterator]() {
-    return (function* (map, source) {
-      for (const s of source) {
-        yield map(s);
-      }
-    })(this.map, this.source);
-  }
-}
+import { IterableMap } from "./iterable-map";
 
 export function unfoldRefoldFor<Terminal, Unfoldable, Folded>(
   isTerminal:
