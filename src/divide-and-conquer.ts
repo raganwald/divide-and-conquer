@@ -16,7 +16,7 @@ import { IterableMap } from "./iterable-map";
 
 export function unfoldRefoldFor<Terminal, Unfoldable, Folded>(
   isTerminal:
-    (maybeUnfoldable: Terminal | Unfoldable) => maybeUnfoldable is Terminal,
+    (maybeTerminal: Terminal | Unfoldable) => maybeTerminal is Terminal,
   mapTerminal: (terminal: Terminal) => Folded,
   unfold: (unfoldable: Unfoldable) => Iterable<Terminal | Unfoldable>,
   refold: (results: Iterable<Folded>) => Folded // clients are expected to deal with an iterable here
