@@ -1,16 +1,16 @@
 import {
-  unfoldRefoldFor,
-  identity
-} from '../src/divide-and-conquer';
+  unfoldRefoldFor} from '../src/divide-and-conquer';
+import { identity } from "../src/identity";
 
 const isZeroOrOne = (n: number) => n === 0 || n === 1;
 
-const fib = unfoldRefoldFor(
-  isZeroOrOne, // does not appear to enforce `iSZeroOrOne` being a type predicate!
-  identity,
-  (n: number) => [n - 1, n - 2],
-  ([nMinusOne, nMinusTwo]: Iterable<number>) => nMinusOne + nMinusTwo
-);
+const fib = unfoldRefoldFor({
+  isTerminal: isZeroOrOne, // does not appear to enforce `iSZeroOrOne` being a type predicate!
+  mapTerminal: identity,
+  unfold: (n: number) => [n - 1, n - 2],
+  mapUnfolded: identity,
+  refold: ([nMinusOne, nMinusTwo]: Iterable<number>) => nMinusOne + nMinusTwo
+});
 
 test('fib', () => {
   expect(fib(0)).toEqual(0);
