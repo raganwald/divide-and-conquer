@@ -97,7 +97,7 @@ export function refold<T>(entries: Iterable<FoldableEntry<T>>): QuadTree<T> {
   const refoldedQuadTree: { [key: string]: QuadTree<T> } = Object.fromEntries(entries);
 
   if (isQuadTree(refoldedQuadTree)) return refoldedQuadTree;
-  else throw new RangeError(`missing quad tree propertiesd, only supplied ${Object.keys(refoldedQuadTree).join(', ')}`);
+  else throw new RangeError(`missing quad tree properties, only supplied ${Object.keys(refoldedQuadTree).join(', ')}`);
 }
 
 export function reader<TerminalInOutput>(sq: Array<Array<TerminalInOutput>>): QuadTree<TerminalInOutput> {
