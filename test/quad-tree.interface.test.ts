@@ -5,8 +5,7 @@
 //
 // TODO (very aspirational, not a priority): A type that constrains quadtrees to be uniform pyramids
 
-import { unfoldRefoldFor } from "../src/divide-and-conquer";
-import { isExponentOfTwo, isSquare, isTerminal, QuadTree, Region, scanner, terminalMapper, unfold, mapUnfolded, UnfoldedEntry, FoldableEntry, refold } from "../src/quad-tree";
+import { isTerminal, mapUnfolded, QuadTree, reader, refold, Region, scanner, unfold } from "../src/quad-tree";
 
 /* these must all compile */
 
@@ -509,41 +508,6 @@ test('scanner', () => {
 
 });
 
-test('isSquare', () => {
-  expect(isSquare([])).toBe(true);
-  expect(isSquare([[0]])).toBe(true);
-  expect(isSquare([[0, 1]])).toBe(false);
-  expect(isSquare([[0, 1], [1, 0]])).toBe(true);
-});
-
-test('isExponentOfTwo', () => {
-  expect(isExponentOfTwo(0)).toBe(true);
-  expect(isExponentOfTwo(1)).toBe(true);
-  expect(isExponentOfTwo(2)).toBe(true);
-  expect(isExponentOfTwo(3)).toBe(false);
-  expect(isExponentOfTwo(4)).toBe(true);
-  expect(isExponentOfTwo(5)).toBe(false);
-  expect(isExponentOfTwo(6)).toBe(false);
-  expect(isExponentOfTwo(7)).toBe(false);
-  expect(isExponentOfTwo(8)).toBe(true);
-});
-
-test('isTerminal', () => {
-  expect(isTerminal({ row: 0, column: 0, length:  2 })).toBe(true);
-  expect(isTerminal({ row: 0, column: 0, length:  4 })).toBe(false);
-  expect(isTerminal({ row: 0, column: 0, length:  8 })).toBe(false);
-  expect(isTerminal({ row: 0, column: 0, length: 16 })).toBe(false);
-});
-
-test('terminalMapper', () => {
-  const mapTerminal = terminalMapper<number>([
-    [0, 0],
-    [0, 1]
-  ]);
-
-  expect(mapTerminal({ row: 0, column: 0, length: 2})).toEqual({ nw: 0, ne: 0, se: 1, sw: 0 });
-});
-
 test('unfold', () => {
   const eightBy: Region = { row: 0, column: 0, length: 8 };
 
@@ -563,31 +527,6 @@ test('unfold', () => {
     ['sw', { row: 6, column: 4, length: 2 }]
   ]);
 });
-
-function reader<TerminalInOutput>(sq: Array<Array<TerminalInOutput>>): QuadTree<TerminalInOutput> {
-  if (!isSquare(sq)) throw new RangeError('not square');
-  if (sq.length < 2) throw new RangeError('too small');
-  if (!isExponentOfTwo(sq.length)) throw new RangeError('not an exponent of two in length');
-
-  // we have a large square array of sides 2^n where n > 1. It is stored in conventional
-  // representation: an array of 2^n rows, each of which in an array with 2^n elements.
-  // we are unfolding this array, using regions as the divide.
-
-  type Tree = QuadTree<TerminalInOutput>;
-  const ALL: Region = { row: 0, column: 0, length: sq.length };
-  const mapTerminal = terminalMapper(sq);
-
-  const toQuadTree = unfoldRefoldFor<Region, Region, UnfoldedEntry, FoldableEntry<TerminalInOutput>, QuadTree<TerminalInOutput>>({
-    isTerminal,
-    mapTerminal,
-    unfold,
-    mapUnfolded,
-    refold
-  });
-
-  return toQuadTree(ALL);
-}
-
 
 test('reader', () => {
   const mapping = {

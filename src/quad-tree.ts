@@ -1,3 +1,5 @@
+import { unfoldRefoldFor } from "./divide-and-conquer";
+
 // union types are distributative through a conditional
 export type QuadTree<T> = {
   nw: T,
@@ -96,4 +98,27 @@ export function refold<T>(entries: Iterable<FoldableEntry<T>>): QuadTree<T> {
 
   if (isQuadTree(refoldedQuadTree)) return refoldedQuadTree;
   else throw new RangeError(`missing quad tree propertiesd, only supplied ${Object.keys(refoldedQuadTree).join(', ')}`);
+}
+
+export function reader<TerminalInOutput>(sq: Array<Array<TerminalInOutput>>): QuadTree<TerminalInOutput> {
+  if (!isSquare(sq)) throw new RangeError('not square');
+  if (sq.length < 2) throw new RangeError('too small');
+  if (!isExponentOfTwo(sq.length)) throw new RangeError('not an exponent of two in length');
+
+  // we have a large square array of sides 2^n where n > 1. It is stored in conventional
+  // representation: an array of 2^n rows, each of which in an array with 2^n elements.
+  // we are unfolding this array, using regions as the divide.
+  type Tree = QuadTree<TerminalInOutput>;
+  const ALL: Region = { row: 0, column: 0, length: sq.length };
+  const mapTerminal = terminalMapper(sq);
+
+  const toQuadTree = unfoldRefoldFor<Region, Region, UnfoldedEntry, FoldableEntry<TerminalInOutput>, QuadTree<TerminalInOutput>>({
+    isTerminal,
+    mapTerminal,
+    unfold,
+    mapUnfolded,
+    refold
+  });
+
+  return toQuadTree(ALL);
 }
