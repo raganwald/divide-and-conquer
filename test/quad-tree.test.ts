@@ -497,13 +497,16 @@ test('scanner', () => {
     '1': 1
   };
 
+  // error case
+  expect(() => { scanner(mapping, ['00010011011111', '00110111x10001']) }).toThrow(RangeError); // bad char
+
+  // successful cases (some of which will be filtered later)
   expect(scanner(mapping, [])).toEqual([]);
   expect(scanner(mapping, ['00010011011111'])).toEqual(['00010011011111'.split('').map(x => parseInt(x))]);
   expect(scanner(mapping, ['00010011011111', '00110111110001'])).toEqual(
     ['00010011011111'.split('').map(x => parseInt(x)), '00110111110001'.split('').map(x => parseInt(x))]
   );
 
-  expect(() => { scanner(mapping, ['00010011011111', '00110111x10001']) }).toThrow(RangeError); // bad char
 });
 
 test('isSquare', () => {
@@ -600,4 +603,25 @@ test('reader', () => {
   expect(() => reader(scanner(mapping, ['   ', '  1', ' 1 ']))).toThrow(RangeError); // not an exponent of two in size
   expect(() => reader(scanner(mapping, ['   1', '  1 ', ' 1  ', '1 x ']))).toThrow(RangeError); // bad string
   expect(() => reader(scanner(mapping, ['   1', '  1 ', ' 1  ', '1   ']))).not.toThrow(RangeError); // an exponent of two in size
+
+  // 00
+  // 01
+
+  // terminal case
+  expect(reader(scanner(mapping, ['00', '01']))).toEqual({ nw: 0, ne: 0, se: 1, sw: 0 });
+
+  // 10 | 00
+  // 01 | 00
+  // ---+---
+  // 00 | 01
+  // 00 | 10
+
+  // compound case
+  expect(reader(scanner(mapping, ['1000', '0100', '0001', '0010']))).toEqual({
+    nw: { nw: 1, ne: 0, se: 1, sw: 0 },
+    ne: { nw: 0, ne: 0, se: 0, sw: 0 },
+    se: { nw: 0, ne: 1, se: 0, sw: 1 },
+    sw: { nw: 0, ne: 0, se: 0, sw: 0 }
+  });
+
 });
