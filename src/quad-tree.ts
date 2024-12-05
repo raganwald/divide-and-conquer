@@ -68,10 +68,10 @@ export function terminalMapper<TerminalInOutput>(sq: Array<Array<TerminalInOutpu
   };
 }
 
-export type UnfoldedEntry = [keyof QuadTree<void>, Region];
-export type FoldableEntry<T> = [keyof QuadTree<T>, QuadTree<T>];
+export type UnfoldedEntry<T> = [keyof QuadTree<void>, T];
+export type FoldableEntry<T> = [keyof QuadTree<T>, T | QuadTree<T>];
 
-export const unfold = ({ row, column, length }: Region): Iterable<UnfoldedEntry> => {
+export const unfold = ({ row, column, length }: Region): Iterable<UnfoldedEntry<Region>> => {
   const halfLength = length / 2;
   if (halfLength < 2) throw new RangeError('cannot unfold a terminal');
 
@@ -84,8 +84,8 @@ export const unfold = ({ row, column, length }: Region): Iterable<UnfoldedEntry>
   ];
 };
 
-export function mapUnfolded<T>(f) {
-  return ([key, value]: UnfoldedEntry): FoldableEntry<ReturnType<typeof f>> => [key, f(value)];
+export function mapUnfolded(f) {
+  return ([key, value]): FoldableEntry<ReturnType<typeof f>> => [key, f(value)];
 }
 
 function isQuadTree<T>(node: { [key: string]: T | QuadTree<T>}): node is QuadTree<T> {
@@ -94,7 +94,7 @@ function isQuadTree<T>(node: { [key: string]: T | QuadTree<T>}): node is QuadTre
 }
 
 export function refold<T>(entries: Iterable<FoldableEntry<T>>): QuadTree<T> {
-  const refoldedQuadTree: { [key: string]: QuadTree<T> } = Object.fromEntries(entries);
+  const refoldedQuadTree: { [key: string]: T | QuadTree<T> } = Object.fromEntries(entries);
 
   if (isQuadTree(refoldedQuadTree)) return refoldedQuadTree;
   else throw new RangeError(`missing quad tree properties, only supplied ${Object.keys(refoldedQuadTree).join(', ')}`);
@@ -112,13 +112,11 @@ export function reader<TerminalInOutput>(sq: Array<Array<TerminalInOutput>>): Qu
   const ALL: Region = { row: 0, column: 0, length: sq.length };
   const mapTerminal = terminalMapper(sq);
 
-  const toQuadTree = unfoldRefoldFor<Region, Region, UnfoldedEntry, FoldableEntry<TerminalInOutput>, QuadTree<TerminalInOutput>>({
+  return unfoldRefoldFor<Region, Region, UnfoldedEntry<Region>, FoldableEntry<TerminalInOutput>, QuadTree<TerminalInOutput>>({
     isTerminal,
     mapTerminal,
     unfold,
     mapUnfolded,
     refold
-  });
-
-  return toQuadTree(ALL);
+  })(ALL);
 }

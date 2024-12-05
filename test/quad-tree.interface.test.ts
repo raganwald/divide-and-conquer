@@ -5,7 +5,7 @@
 //
 // TODO (very aspirational, not a priority): A type that constrains quadtrees to be uniform pyramids
 
-import { isTerminal, mapUnfolded, QuadTree, reader, refold, Region, scanner, unfold } from "../src/quad-tree";
+import { QuadTree, Region, reader, scanner, unfold } from "../src/quad-tree";
 
 /* these must all compile */
 
