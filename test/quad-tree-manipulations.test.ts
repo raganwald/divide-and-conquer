@@ -96,7 +96,6 @@ test('mirrors', () => {
     se: 'sw',
     sw: 'se'
   };
-
   expect(duplicate<number>({isTerminal, afterRefold: mapWith(vertical) })(1)).toBe(1);
   expect(duplicate<number>({isTerminal, afterRefold: mapWith(vertical) })(one234)).toEqual(two143); // reflection on vertical axis
 
